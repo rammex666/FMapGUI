@@ -1,0 +1,11 @@
+name: FMapGUI
+version: '${project.version}'
+main: org.rammex.fmapgui.FMapGUI
+api-version: '1.20'
+commands:
+  fmap:
+    description: Open the FMap GUI
+    permission: fmapgui.open
+  fmapreload:
+    description: Reload the FMap GUI
+    permission: fmapgui.reload

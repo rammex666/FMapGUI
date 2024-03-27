@@ -1,0 +1,10 @@
+book:
+  name: "FMapGUI"
+  lore:
+    - "Open the FMap GUI"
+
+MapSize:
+  # max width : 4 (4, 3, 2, 1)
+  width: 4
+  # max height : 2 (2, 1)
+  height: 2

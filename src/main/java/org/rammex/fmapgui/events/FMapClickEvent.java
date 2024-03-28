@@ -34,7 +34,13 @@ public class FMapClickEvent implements Listener {
             event.setCancelled(true);
             event.setResult(InventoryClickEvent.Result.DENY);
             if(clickedItem.getType() == Material.YELLOW_WOOL){
-                openFactionGestion(playerWhoClicked,clickedItem.getItemMeta().getDisplayName());
+                openFactionNeutralGestion(playerWhoClicked,clickedItem.getItemMeta().getDisplayName());
+            }
+            if(clickedItem.getType() == Material.GREEN_WOOL){
+                openFactionAllyGestion(playerWhoClicked,clickedItem.getItemMeta().getDisplayName());
+            }
+            if(clickedItem.getType() == Material.RED_WOOL){
+                openFactionEnemyGestion(playerWhoClicked,clickedItem.getItemMeta().getDisplayName());
             }
         }
         if (inventoryTitle.contains("Gestion")) {
@@ -61,6 +67,16 @@ public class FMapClickEvent implements Listener {
                 playerWhoClicked.closeInventory();
                 playerWhoClicked.sendMessage("§aVous ête maintenant allier avec la faction "+inventoryTitle.replace(" Gestion",""));
             }
+            if(clickedItem.getType() == Material.WHITE_CONCRETE){
+                FPlayer fplayer = FPlayers.getInstance().getByPlayer(playerWhoClicked);
+                if(fplayer.hasFaction() && fplayer.getRole() == Role.ADMIN || fplayer.getRole() == Role.COLEADER) {
+                    Faction playerFaction = fplayer.getFaction();
+                    Faction targetFaction = Factions.getInstance().getByTag(inventoryTitle.replace(" Gestion",""));
+                    playerFaction.setRelationWish(targetFaction, Relation.NEUTRAL);
+                }
+                playerWhoClicked.closeInventory();
+                playerWhoClicked.sendMessage("§aVous ête maintenant neutre avec la faction "+inventoryTitle.replace(" Gestion",""));
+            }
             if(clickedItem.getType() == Material.RED_DYE){
                 playerWhoClicked.closeInventory();
                 FMapCommand.openMapUI(playerWhoClicked);
@@ -69,11 +85,35 @@ public class FMapClickEvent implements Listener {
     }
 
 
-    public void openFactionGestion(Player player,String factionName) {
-        Inventory inv = Bukkit.createInventory(null, 27, factionName+" Gestion");
+    public void openFactionNeutralGestion(Player player,String factionName) {
+        Inventory inv = Bukkit.createInventory(null, 27, factionName.replace("§eNeutre : ","")+" Gestion");
 
 
         inv.setItem(12, ItemBuilder.getSimpleMaterialItem(Material.RED_CONCRETE, ChatColor.RED+"Faire la guerre"));
+        inv.setItem(14, ItemBuilder.getSimpleMaterialItem(Material.GREEN_CONCRETE, ChatColor.GREEN+"Faire une alliance"));
+        inv.setItem(18, ItemBuilder.getSimpleMaterialItem(Material.RED_DYE, ChatColor.RED+"Retour"));
+
+
+        player.openInventory(inv);
+    }
+
+    public void openFactionAllyGestion(Player player,String factionName) {
+        Inventory inv = Bukkit.createInventory(null, 27, factionName.replace("§2Allier : ","")+" Gestion");
+
+
+        inv.setItem(12, ItemBuilder.getSimpleMaterialItem(Material.RED_CONCRETE, ChatColor.RED+"Faire la guerre"));
+        inv.setItem(14, ItemBuilder.getSimpleMaterialItem(Material.WHITE_CONCRETE, ChatColor.GREEN+"Devenir Neutre"));
+        inv.setItem(18, ItemBuilder.getSimpleMaterialItem(Material.RED_DYE, ChatColor.RED+"Retour"));
+
+
+        player.openInventory(inv);
+    }
+
+    public void openFactionEnemyGestion(Player player,String factionName) {
+        Inventory inv = Bukkit.createInventory(null, 27, factionName.replace("§4Ennemis : ","")+" Gestion");
+
+
+        inv.setItem(12, ItemBuilder.getSimpleMaterialItem(Material.WHITE_CONCRETE, ChatColor.RED+"Devenir Neutre"));
         inv.setItem(14, ItemBuilder.getSimpleMaterialItem(Material.GREEN_CONCRETE, ChatColor.GREEN+"Faire une alliance"));
         inv.setItem(18, ItemBuilder.getSimpleMaterialItem(Material.RED_DYE, ChatColor.RED+"Retour"));
 

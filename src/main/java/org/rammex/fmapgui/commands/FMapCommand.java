@@ -54,6 +54,10 @@ public class FMapCommand implements CommandExecutor {
                 } else if (relation.equals(Relation.NEUTRAL.toString())) {
                     if(isWilderness(player, chunkX, chunkZ)) {
                         woolColor = Material.WHITE_WOOL;
+                    } else if (isSafeZone(player, chunkX, chunkZ)) {
+                        woolColor = Material.BROWN_WOOL;
+                    } else if (isWarZone(player,chunkX,chunkZ)) {
+                        woolColor = Material.BLACK_WOOL;
                     } else {
                         woolColor = Material.YELLOW_WOOL;
                     }
@@ -67,8 +71,25 @@ public class FMapCommand implements CommandExecutor {
 
                 ItemMeta blockMeta = block.getItemMeta();
 
-                blockMeta.setDisplayName(getFactionName(player, chunkX, chunkZ));
 
+
+                if (relation.equals(Relation.MEMBER.toString())) {
+                    blockMeta.setDisplayName("§aMembre : "+getFactionName(player, chunkX, chunkZ));
+                } else if (relation.equals(Relation.ALLY.toString())) {
+                    blockMeta.setDisplayName("§2Allier : "+getFactionName(player, chunkX, chunkZ));
+                } else if (relation.equals(Relation.ENEMY.toString())) {
+                    blockMeta.setDisplayName("§4Ennemis : "+getFactionName(player, chunkX, chunkZ));
+                } else if (relation.equals(Relation.NEUTRAL.toString())) {
+                    if(isWilderness(player, chunkX, chunkZ)) {
+                        blockMeta.setDisplayName(getFactionName(player, chunkX, chunkZ));
+                    } else if (isSafeZone(player, chunkX, chunkZ)) {
+                        blockMeta.setDisplayName(getFactionName(player, chunkX, chunkZ));
+                    } else if (isWarZone(player,chunkX,chunkZ)) {
+                        blockMeta.setDisplayName(getFactionName(player, chunkX, chunkZ));
+                    } else {
+                        blockMeta.setDisplayName("§eNeutre : "+getFactionName(player, chunkX, chunkZ));
+                    }
+                }
                 block.setItemMeta(blockMeta);
 
                 int inventoryIndex = (dx + 1) * 9 + dz + 13;
@@ -105,6 +126,22 @@ public class FMapCommand implements CommandExecutor {
         FLocation flocation = new FLocation(worldName, x, z);
         Faction faction = Board.getInstance().getFactionAt(flocation);
         return faction.isWilderness();
+    }
+
+    private static Boolean isSafeZone(Player player, int x,int z){
+        String worldName = player.getWorld().getName();
+
+        FLocation flocation = new FLocation(worldName, x, z);
+        Faction faction = Board.getInstance().getFactionAt(flocation);
+        return faction.isSafeZone();
+    }
+
+    private static Boolean isWarZone(Player player, int x,int z){
+        String worldName = player.getWorld().getName();
+
+        FLocation flocation = new FLocation(worldName, x, z);
+        Faction faction = Board.getInstance().getFactionAt(flocation);
+        return faction.isWarZone();
     }
 
     private static Integer width() {
